@@ -1,4 +1,3 @@
-from operator import ne
 import requests
 import time
 from parsel import Selector
@@ -37,7 +36,31 @@ def scrape_next_page_link(html_content):
 
 # Requisito 4
 def scrape_noticia(html_content):
-    """Seu código deve vir aqui"""
+    selector = Selector(html_content)
+    url = selector.css("head link[rel=canonical] ::attr(href)").get()
+    title = selector.css("h1.entry-title::text").get()
+    timestamp = selector.css("li.meta-date::text").get()
+    writer = selector.css("span.fn a::text").get()
+    comments = selector.css("h5.title-block").get()
+    comments_count = 0
+    for s in comments.split():
+        if s.isdigit():
+            comments_count = int(s)
+    summary = selector.css("div.entry-content p::text").getall()
+    tags = selector.css("li a[rel=tag]::text").getall()
+    category = selector.css("span.label::text").get()
+    scraped_dict = {
+        "url": url,
+        "title": title,
+        "timestamp": timestamp,
+        "writer": writer.strip(),
+        "comments_count": comments_count,
+        "summary": summary[0] + ' ' + summary[1],
+        "tags": tags,
+        "category": category,
+    }
+    print(summary[0] + ' ' + summary[1])
+    return scraped_dict
 
 
 # Requisito 5
