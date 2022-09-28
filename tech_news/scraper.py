@@ -1,5 +1,6 @@
 import requests
 import time
+from parsel import Selector
 
 
 # Requisito 1
@@ -17,7 +18,13 @@ def fetch(url, timeout=3):
 
 # Requisito 2
 def scrape_novidades(html_content):
-    """Seu código deve vir aqui"""
+    try:
+        selector = Selector(html_content)
+        news_links = selector.css('div.cs-overlay a::attr(href)').getall()
+    except html_content == "":
+        return []
+    else:
+        return news_links
 
 
 # Requisito 3
