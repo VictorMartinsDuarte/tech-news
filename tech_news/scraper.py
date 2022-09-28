@@ -1,3 +1,4 @@
+from operator import ne
 import requests
 import time
 from parsel import Selector
@@ -20,7 +21,7 @@ def fetch(url, timeout=3):
 def scrape_novidades(html_content):
     try:
         selector = Selector(html_content)
-        news_links = selector.css('div.cs-overlay a::attr(href)').getall()
+        news_links = selector.css('a.cs-overlay-link ::attr(href)').getall()
     except html_content == "":
         return []
     else:
@@ -29,7 +30,9 @@ def scrape_novidades(html_content):
 
 # Requisito 3
 def scrape_next_page_link(html_content):
-    """Seu código deve vir aqui"""
+    selector = Selector(html_content)
+    selector_css_string = 'a.next ::attr(href)'
+    return selector.css(selector_css_string).get()
 
 
 # Requisito 4
