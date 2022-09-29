@@ -20,7 +20,7 @@ def fetch(url, timeout=3):
 def scrape_novidades(html_content):
     try:
         selector = Selector(html_content)
-        news_links = selector.css('a.cs-overlay-link ::attr(href)').getall()
+        news_links = selector.css("a.cs-overlay-link ::attr(href)").getall()
     except html_content == "":
         return []
     else:
@@ -30,7 +30,7 @@ def scrape_novidades(html_content):
 # Requisito 3
 def scrape_next_page_link(html_content):
     selector = Selector(html_content)
-    selector_css_string = 'a.next ::attr(href)'
+    selector_css_string = "a.next ::attr(href)"
     return selector.css(selector_css_string).get()
 
 
@@ -46,20 +46,21 @@ def scrape_noticia(html_content):
     for s in comments.split():
         if s.isdigit():
             comments_count = int(s)
-    summary = selector.css("div.entry-content p::text").getall()
+    summary = selector.css(
+        "div.entry-content > p:nth-of-type(1) *::text"
+    ).getall()
     tags = selector.css("li a[rel=tag]::text").getall()
     category = selector.css("span.label::text").get()
     scraped_dict = {
         "url": url,
-        "title": title,
+        "title": title.strip(),
         "timestamp": timestamp,
         "writer": writer.strip(),
         "comments_count": comments_count,
-        "summary": summary[0] + ' ' + summary[1],
+        "summary": ''.join(summary).strip(),
         "tags": tags,
         "category": category,
     }
-    print(summary[0] + ' ' + summary[1])
     return scraped_dict
 
 
